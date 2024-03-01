@@ -17,24 +17,24 @@ public class FranchiseController {
     public FranchiseController(@Autowired FranchiseRepository franchiseRepository) {
         this.franchiseRepository = franchiseRepository;
     }
-
+    //все франшизы
     @GetMapping
     public List<Franchise> getAllFranchises() {
         return franchiseRepository.findAll();
     }
-
+//добавление
     @PostMapping
     public Franchise createFranchise(@RequestBody Franchise franchise) {
         return franchiseRepository.save(franchise);
     }
-
+//по айди
     @GetMapping("/{id}")
     public ResponseEntity<Franchise> getFranchiseById(@PathVariable Integer id) {
         return franchiseRepository.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
-
+//update
     @PutMapping("/{id}")
     public ResponseEntity<Franchise> updateFranchise(@PathVariable Integer id, @RequestBody Franchise franchiseDetails) {
         return franchiseRepository.findById(id)
@@ -44,7 +44,7 @@ public class FranchiseController {
                     return ResponseEntity.ok(updatedFranchise);
                 }).orElse(ResponseEntity.notFound().build());
     }
-
+//delete
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteFranchise(@PathVariable Integer id) {
         return franchiseRepository.findById(id)
