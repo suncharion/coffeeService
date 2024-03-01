@@ -1,5 +1,7 @@
-package com.coffeeFr.spring;
+package com.coffeeFranchise;
 
+import com.coffeeFranchise.model.Franchise;
+import com.coffeeFranchise.repository.FranchiseRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
