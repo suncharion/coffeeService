@@ -18,7 +18,7 @@ public class OrdersController {
         this.ordersRepository = ordersRepository;
     }
 
-    // Получение списка всех заказов
+
     @GetMapping
     public List<Orders> getAllOrders() {
         return ordersRepository.findAll();
@@ -30,7 +30,7 @@ public class OrdersController {
         return ordersRepository.save(order);
     }
 
-    // Получение заказа по ID
+
     @GetMapping("/{id}")
     public ResponseEntity<Orders> getOrderById(@PathVariable Integer id) {
         return ordersRepository.findById(id)
@@ -38,20 +38,16 @@ public class OrdersController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // Обновление заказа
+
     @PutMapping("/{id}")
     public ResponseEntity<Orders> updateOrder(@PathVariable Integer id, @RequestBody Orders orderDetails) {
         return ordersRepository.findById(id)
                 .map(order -> {
-                    // Предполагаем, что в вашем классе Orders есть методы set для обновления полей
-                    // Пример обновления поля: order.setQuantity(orderDetails.getQuantity());
-                    // Обновите поля заказа здесь, в соответствии с вашей моделью
                     Orders updatedOrder = ordersRepository.save(order);
                     return ResponseEntity.ok(updatedOrder);
                 }).orElse(ResponseEntity.notFound().build());
     }
 
-    // Удаление заказа
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteOrder(@PathVariable Integer id) {
         return ordersRepository.findById(id)
