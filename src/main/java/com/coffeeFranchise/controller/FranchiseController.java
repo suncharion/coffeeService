@@ -40,7 +40,6 @@ public class FranchiseController {
         return franchiseRepository.findById(id)
                 .map(franchise -> {
                     franchise.setLocation(franchiseDetails.getLocation());
-                    // Добавьте здесь обновление других полей франшизы, если они есть
                     Franchise updatedFranchise = franchiseRepository.save(franchise);
                     return ResponseEntity.ok(updatedFranchise);
                 }).orElse(ResponseEntity.notFound().build());
