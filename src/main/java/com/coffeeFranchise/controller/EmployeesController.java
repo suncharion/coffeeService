@@ -2,7 +2,6 @@ package com.coffeeFranchise.controller;
 
 import com.coffeeFranchise.model.Employees;
 import com.coffeeFranchise.service.EmployeesService;
-import com.coffeeFranchise.service.EmployeesService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
