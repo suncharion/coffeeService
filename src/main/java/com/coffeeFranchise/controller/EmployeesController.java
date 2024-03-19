@@ -1,8 +1,8 @@
 package com.coffeeFranchise.controller;
 
 import com.coffeeFranchise.model.Employees;
-import com.coffeeFranchise.repository.EmployeesRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.coffeeFranchise.service.EmployeesService;
+import com.coffeeFranchise.service.EmployeesService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,46 +12,37 @@ import java.util.List;
 @RequestMapping("/employees")
 public class EmployeesController {
 
-    private final EmployeesRepository employeeRepository;
+    private final EmployeesService employeeService;
 
-    public EmployeesController(@Autowired EmployeesRepository employeeRepository) {
-        this.employeeRepository = employeeRepository;
+    public EmployeesController(EmployeesService employeeService) {
+        this.employeeService = employeeService;
     }
 
     @GetMapping
     public List<Employees> getAllEmployees() {
-        return employeeRepository.findAll();
+        return employeeService.getAllEmployees();
     }
 
     @PostMapping
     public Employees createEmployee(@RequestBody Employees employee) {
-        return employeeRepository.save(employee);
+        return employeeService.createEmployee(employee);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Employees> getEmployeeById(@PathVariable Integer id) {
-        return employeeRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<Employees> getEmployeeById(@PathVariable Long id) {
+        Employees employee = employeeService.getEmployeeById(id);
+        return ResponseEntity.ok(employee);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Employees> updateEmployee(@PathVariable Integer id, @RequestBody Employees employeeDetails) {
-        return employeeRepository.findById(id)
-                .map(employee -> {
-                    employee.setEmployeeName(employeeDetails.getEmployeeName());
-                    // Здесь можно добавить обновление других полей сотрудника
-                    Employees updatedEmployee = employeeRepository.save(employee);
-                    return ResponseEntity.ok(updatedEmployee);
-                }).orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<Employees> updateEmployee(@PathVariable Long id, @RequestBody Employees employeeDetails) {
+        Employees updatedEmployee = employeeService.updateEmployee(id, employeeDetails);
+        return ResponseEntity.ok(updatedEmployee);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteEmployee(@PathVariable Integer id) {
-        return employeeRepository.findById(id)
-                .map(employee -> {
-                    employeeRepository.delete(employee);
-                    return ResponseEntity.ok().build();
-                }).orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<?> deleteEmployee(@PathVariable Long id) {
+        employeeService.deleteEmployee(id);
+        return ResponseEntity.ok().build();
     }
 }

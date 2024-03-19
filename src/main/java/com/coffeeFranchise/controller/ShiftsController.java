@@ -1,8 +1,8 @@
 package com.coffeeFranchise.controller;
 
 import com.coffeeFranchise.model.Shifts;
-import com.coffeeFranchise.repository.ShiftsRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.coffeeFranchise.service.ShiftsService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,19 +11,31 @@ import java.util.List;
 @RequestMapping("/shifts")
 public class ShiftsController {
 
-    private final ShiftsRepository shiftsRepository;
+    private final ShiftsService shiftsService;
 
-    public ShiftsController(@Autowired ShiftsRepository shiftsRepository) {
-        this.shiftsRepository = shiftsRepository;
+    public ShiftsController(ShiftsService shiftsService) {
+        this.shiftsService = shiftsService;
     }
 
     @GetMapping
     public List<Shifts> getAllShifts() {
-        return shiftsRepository.findAll();
+        return shiftsService.getAllShifts();
     }
 
     @PostMapping
     public Shifts createShift(@RequestBody Shifts shift) {
-        return shiftsRepository.save(shift);
+        return shiftsService.createShift(shift);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Shifts> updateShift(@PathVariable Long id, @RequestBody Shifts shiftDetails) {
+        Shifts updatedShift = shiftsService.updateShift(id, shiftDetails);
+        return ResponseEntity.ok(updatedShift);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteShift(@PathVariable Long id) {
+        shiftsService.deleteShift(id);
+        return ResponseEntity.ok().build();
     }
 }

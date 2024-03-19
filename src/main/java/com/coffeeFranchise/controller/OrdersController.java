@@ -1,59 +1,56 @@
 package com.coffeeFranchise.controller;
 
+import com.coffeeFranchise.dto.OrderDTO;
 import com.coffeeFranchise.model.Orders;
-import com.coffeeFranchise.repository.OrdersRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.coffeeFranchise.service.OrdersService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
 @RequestMapping("/orders")
 public class OrdersController {
 
-    private final OrdersRepository ordersRepository;
+    private final OrdersService ordersService;
 
-    public OrdersController(@Autowired OrdersRepository ordersRepository) {
-        this.ordersRepository = ordersRepository;
+    public OrdersController(OrdersService ordersService) {
+        this.ordersService = ordersService;
     }
-
 
     @GetMapping
-    public List<Orders> getAllOrders() {
-        return ordersRepository.findAll();
+    public List<OrderDTO> getAllOrders() {
+        return ordersService.getAllOrders();
     }
 
-    // Создание нового заказа
     @PostMapping
-    public Orders createOrder(@RequestBody Orders order) {
-        return ordersRepository.save(order);
+    public OrderDTO createOrder(@RequestBody OrderDTO order) {
+        return ordersService.createOrder(order);
     }
-
 
     @GetMapping("/{id}")
-    public ResponseEntity<Orders> getOrderById(@PathVariable Integer id) {
-        return ordersRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<OrderDTO> getOrderById(@PathVariable Long id) {
+        OrderDTO order = ordersService.getOrderById(id);
+        return ResponseEntity.ok(order);
     }
 
-
     @PutMapping("/{id}")
-    public ResponseEntity<Orders> updateOrder(@PathVariable Integer id, @RequestBody Orders orderDetails) {
-        return ordersRepository.findById(id)
-                .map(order -> {
-                    Orders updatedOrder = ordersRepository.save(order);
-                    return ResponseEntity.ok(updatedOrder);
-                }).orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<OrderDTO> updateOrder(@PathVariable Long id, @RequestBody OrderDTO orderDetails) {
+        OrderDTO updatedOrder = ordersService.updateOrder(id, orderDetails);
+        return ResponseEntity.ok(updatedOrder);
+    }
+
+    @GetMapping("/{id}/total")
+    public ResponseEntity<BigDecimal> getOrderTotal(@PathVariable Long id) {
+        OrderDTO order = ordersService.getOrderById(id);
+        BigDecimal total = order.calculateItemTotal();
+        return ResponseEntity.ok(total);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteOrder(@PathVariable Integer id) {
-        return ordersRepository.findById(id)
-                .map(order -> {
-                    ordersRepository.delete(order);
-                    return ResponseEntity.ok().build();
-                }).orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<?> deleteOrder(@PathVariable Long id) {
+        ordersService.deleteOrder(id);
+        return ResponseEntity.ok().build();
     }
 }

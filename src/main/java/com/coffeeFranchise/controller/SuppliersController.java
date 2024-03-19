@@ -1,8 +1,8 @@
 package com.coffeeFranchise.controller;
 
 import com.coffeeFranchise.model.Suppliers;
-import com.coffeeFranchise.repository.SuppliersRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.coffeeFranchise.service.SuppliersService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,19 +11,37 @@ import java.util.List;
 @RequestMapping("/suppliers")
 public class SuppliersController {
 
-    private final SuppliersRepository suppliersRepository;
+    private final SuppliersService suppliersService;
 
-    public SuppliersController(@Autowired SuppliersRepository suppliersRepository) {
-        this.suppliersRepository = suppliersRepository;
+    public SuppliersController(SuppliersService suppliersService) {
+        this.suppliersService = suppliersService;
     }
 
     @GetMapping
     public List<Suppliers> getAllSuppliers() {
-        return suppliersRepository.findAll();
+        return suppliersService.getAllSuppliers();
     }
 
     @PostMapping
     public Suppliers createSupplier(@RequestBody Suppliers supplier) {
-        return suppliersRepository.save(supplier);
+        return suppliersService.createSupplier(supplier);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Suppliers> getSupplierById(@PathVariable Long id) {
+        Suppliers supplier = suppliersService.getSupplierById(id);
+        return ResponseEntity.ok(supplier);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Suppliers> updateSupplier(@PathVariable Long id, @RequestBody Suppliers supplierDetails) {
+        Suppliers updatedSupplier = suppliersService.updateSupplier(id, supplierDetails);
+        return ResponseEntity.ok(updatedSupplier);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteSupplier(@PathVariable Long id) {
+        suppliersService.deleteSupplier(id);
+        return ResponseEntity.ok().build();
     }
 }

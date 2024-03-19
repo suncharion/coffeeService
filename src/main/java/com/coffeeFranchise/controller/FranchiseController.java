@@ -1,8 +1,7 @@
 package com.coffeeFranchise.controller;
 
 import com.coffeeFranchise.model.Franchise;
-import com.coffeeFranchise.repository.FranchiseRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.coffeeFranchise.service.FranchiseService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,45 +11,37 @@ import java.util.List;
 @RequestMapping("/franchises")
 public class FranchiseController {
 
-    private final FranchiseRepository franchiseRepository;
+    private final FranchiseService franchiseService;
 
-    public FranchiseController(@Autowired FranchiseRepository franchiseRepository) {
-        this.franchiseRepository = franchiseRepository;
+    public FranchiseController(FranchiseService franchiseService) {
+        this.franchiseService = franchiseService;
     }
-    //все франшизы
+
     @GetMapping
     public List<Franchise> getAllFranchises() {
-        return franchiseRepository.findAll();
+        return franchiseService.getAllFranchises();
     }
-//добавление
+
     @PostMapping
     public Franchise createFranchise(@RequestBody Franchise franchise) {
-        return franchiseRepository.save(franchise);
+        return franchiseService.createFranchise(franchise);
     }
-//по айди
+
     @GetMapping("/{id}")
-    public ResponseEntity<Franchise> getFranchiseById(@PathVariable Integer id) {
-        return franchiseRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<Franchise> getFranchiseById(@PathVariable Long id) {
+        Franchise franchise = franchiseService.getFranchiseById(id);
+        return ResponseEntity.ok(franchise);
     }
-//update
+
     @PutMapping("/{id}")
-    public ResponseEntity<Franchise> updateFranchise(@PathVariable Integer id, @RequestBody Franchise franchiseDetails) {
-        return franchiseRepository.findById(id)
-                .map(franchise -> {
-                    franchise.setLocation(franchiseDetails.getLocation());
-                    Franchise updatedFranchise = franchiseRepository.save(franchise);
-                    return ResponseEntity.ok(updatedFranchise);
-                }).orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<Franchise> updateFranchise(@PathVariable Long id, @RequestBody Franchise franchiseDetails) {
+        Franchise updatedFranchise = franchiseService.updateFranchise(id, franchiseDetails);
+        return ResponseEntity.ok(updatedFranchise);
     }
-//delete
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteFranchise(@PathVariable Integer id) {
-        return franchiseRepository.findById(id)
-                .map(franchise -> {
-                    franchiseRepository.delete(franchise);
-                    return ResponseEntity.ok().build();
-                }).orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<?> deleteFranchise(@PathVariable Long id) {
+        franchiseService.deleteFranchise(id);
+        return ResponseEntity.ok().build();
     }
 }

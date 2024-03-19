@@ -1,8 +1,7 @@
 package com.coffeeFranchise.controller;
 
 import com.coffeeFranchise.model.Menu;
-import com.coffeeFranchise.repository.MenuRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.coffeeFranchise.service.MenuService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,47 +11,37 @@ import java.util.List;
 @RequestMapping("/menu")
 public class MenuController {
 
-    private final MenuRepository menuRepository;
+    private final MenuService menuService;
 
-    public MenuController(@Autowired MenuRepository menuRepository) {
-        this.menuRepository = menuRepository;
+    public MenuController(MenuService menuService) {
+        this.menuService = menuService;
     }
 
     @GetMapping
     public List<Menu> getAllMenuItems() {
-        return menuRepository.findAll();
+        return menuService.getAllMenuItems();
     }
 
     @PostMapping
-    public Menu addMenuItem(@RequestBody Menu menuItem) {
-        return menuRepository.save(menuItem);
+    public Menu addMenuItem(@RequestBody Menu menu) {
+        return menuService.addMenuItem(menu);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Menu> getMenuItemById(@PathVariable Integer id) {
-        return menuRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<Menu> getMenuById(@PathVariable Long id) {
+        Menu menu = menuService.getMenuById(id);
+        return ResponseEntity.ok(menu);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Menu> updateMenuItem(@PathVariable Integer id, @RequestBody Menu menuItemDetails) {
-        return menuRepository.findById(id)
-                .map(menuItem -> {
-                    menuItem.setItemName(menuItemDetails.getItemName());
-                    menuItem.setItemPrice(menuItemDetails.getItemPrice());
-                    // Добавьте здесь обновление других полей, если они есть
-                    Menu updatedMenuItem = menuRepository.save(menuItem);
-                    return ResponseEntity.ok(updatedMenuItem);
-                }).orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<Menu> updateMenuItem(@PathVariable Long id, @RequestBody Menu menuDetails) {
+        Menu updatedMenu = menuService.updateMenuItem(id, menuDetails);
+        return ResponseEntity.ok(updatedMenu);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteMenuItem(@PathVariable Integer id) {
-        return menuRepository.findById(id)
-                .map(menuItem -> {
-                    menuRepository.delete(menuItem);
-                    return ResponseEntity.ok().build();
-                }).orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<?> deleteMenuItem(@PathVariable Long id) {
+        menuService.deleteMenuItem(id);
+        return ResponseEntity.ok().build();
     }
 }

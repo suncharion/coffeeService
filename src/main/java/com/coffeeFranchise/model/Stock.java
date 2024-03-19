@@ -17,6 +17,8 @@ public class Stock {
 
     private String beanName;
     private BeanType beanType;
+    private String snacks;
+    private String milk;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_franchise")

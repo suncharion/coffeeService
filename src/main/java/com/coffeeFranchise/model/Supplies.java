@@ -12,6 +12,8 @@ public class Supplies {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String Item;
+    private String Quantity;
 
     private Instant deliveryDate;
 
